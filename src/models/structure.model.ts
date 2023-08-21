@@ -3,6 +3,22 @@ import {TStructureModel} from '@/types/types'
 
 const ObjectId = Schema.ObjectId;
 
+const Brick: Schema = new Schema({
+  type: {
+    type: String,
+    enum: ['text', 'textarea', 'image'],
+    default: 'text'
+  },
+  name: {
+    type: String,
+    require: true
+  },
+  code: {
+    type: String,
+    require: true
+  }
+});
+
 const StructureSchema: Schema = new Schema({
     userId: {
       type: ObjectId,
@@ -17,6 +33,10 @@ const StructureSchema: Schema = new Schema({
       type: String,
       require: true,
       unique: true
+    },
+    bricks: {
+      type: [Brick],
+      default: []
     },
     createdAt: {
         type: Date,
