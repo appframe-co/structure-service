@@ -1,28 +1,33 @@
 import Structure from '@/models/structure.model';
 import { TErrorResponse, TStructureInput, TStructure, TBrick } from '@/types/types';
 
-export default async function CreateStructure({userId, projectId, name, code}: TStructureInput): Promise<TErrorResponse | {structure: TStructure}> {
+export default async function UpdateStructure(
+    {userId, projectId, id, name, code, bricks}: 
+    TStructureInput&{id:string}): Promise<TErrorResponse | {structure: TStructure}> {
     try {
-        if (!name || !code) {
+        if (!id) {
             return {error: 'invalid_request'};
         }
 
-        name = name.trim();
-        if (name.length < 1 || name.length > 40) {
-            return {error: 'invalid_request', description: 'Number of characters from 4 to 20.', property: 'name'};
+        if (name) {
+            name = name.trim();
+            if (name.length < 1 || name.length > 40) {
+                return {error: 'invalid_request', description: 'Number of characters from 4 to 20.', property: 'name'};
+            }
         }
 
-        code = code.trim();
-        if (code.length < 1 || code.length > 40) {
-            return {error: 'invalid_request', description: 'Number of characters from 4 to 20.', property: 'code'};
+        if (code) {
+            code = code.trim();
+            if (code.length < 1 || code.length > 40) {
+                return {error: 'invalid_request', description: 'Number of characters from 4 to 20.', property: 'code'};
+            }
         }
 
-        const structure: TStructure = await Structure.create({
+        const structure: TStructure|null  = await Structure.findOneAndUpdate({
             userId, 
             projectId, 
-            name,
-            code
-        });
+            _id: id
+        }, {name, code, bricks});
         if (!structure) {
             return {error: 'invalid_structure'};
         }

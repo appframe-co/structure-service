@@ -1,9 +1,9 @@
-import Structure from '@/models/structure.model'
-import {TErrorResponse, TStructure, TStructureOutput} from '@/types/types'
+import Structure from '@/models/structure.model';
+import {TErrorResponse, TStructure, TBrick} from '@/types/types';
 
 export default async function Structures(
     {userId, projectId}: {userId: string, projectId: string}): 
-    Promise<TErrorResponse | {structures: TStructureOutput[]}>
+    Promise<TErrorResponse | {structures: TStructure[]}>
     {
     try {
         const structures = await Structure.find({userId, projectId});
@@ -13,7 +13,17 @@ export default async function Structures(
 
         const output = structures.map((structure: TStructure)  => ({
             id: structure.id,
-            name: structure.name
+            name: structure.name,
+            code: structure.code,
+            bricks: structure.bricks.map((brick: TBrick) => ({
+                type: brick.type,
+                name: brick.name,
+                code: brick.code,
+                validation: brick.validation.map(v => ({
+                    code: v.code,
+                    value: v.value
+                })),
+            }))
         }));
 
         return {structures: output};

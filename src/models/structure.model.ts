@@ -3,49 +3,45 @@ import {TStructureModel} from '@/types/types'
 
 const ObjectId = Schema.ObjectId;
 
-const Brick: Schema = new Schema({
-  type: {
-    type: String,
-    enum: ['text', 'textarea', 'image'],
-    default: 'text'
-  },
-  name: {
-    type: String,
-    require: true
-  },
-  code: {
-    type: String,
-    require: true
-  }
+const ValidationSchema: Schema = new Schema({
+  code: String,
+  value: String,
+});
+
+const BrickSchema: Schema = new Schema({
+  name: String,
+  code: String,
+  type: String,
+  validation: [ValidationSchema]
 });
 
 const StructureSchema: Schema = new Schema({
-    userId: {
-      type: ObjectId,
-      require: true
-    },
-    projectId: {
-      type: ObjectId,
-      require: true
-    },
-    name: String,
-    code: {
-      type: String,
-      require: true,
-      unique: true
-    },
-    bricks: {
-      type: [Brick],
-      default: []
-    },
-    createdAt: {
-        type: Date,
-        default: new Date
-    },
-    updatedAt: {
-        type: Date,
-        default: new Date
-    }
+  userId: {
+    type: ObjectId,
+    require: true
+  },
+  projectId: {
+    type: ObjectId,
+    require: true
+  },
+  name: String,
+  code: {
+    type: String,
+    require: true,
+    unique: true
+  },
+  bricks: {
+    type: [BrickSchema],
+    default: []
+  },
+  createdAt: {
+      type: Date,
+      default: new Date
+  },
+  updatedAt: {
+      type: Date,
+      default: new Date
+  }
 });
 
 StructureSchema.set('toObject', { virtuals: true });
