@@ -4,7 +4,7 @@ import {TSchemaBrickModel} from '@/types/types'
 const ValidationSchema: Schema = new Schema({
   code: String,
   name: String,
-  value: String,
+  value: Schema.Types.Mixed,
 });
 
 const SchemaBrickSchema: Schema = new Schema({
