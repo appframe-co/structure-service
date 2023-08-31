@@ -2,11 +2,17 @@ import Structure from '@/models/structure.model';
 import {TErrorResponse, TStructure, TBrick} from '@/types/types';
 
 export default async function Structures(
-    {userId, projectId}: {userId: string, projectId: string}): 
+    {userId, projectId, code}: {userId: string, projectId: string, code: string}): 
     Promise<TErrorResponse | {structures: TStructure[]}>
     {
     try {
-        const structures = await Structure.find({userId, projectId});
+        const filter: {userId: string, projectId: string, code?: string} = {userId, projectId};
+
+        if (code) {
+            filter.code = code;
+        }
+
+        const structures = await Structure.find(filter);
         if (!structures) {
             return {error: 'invalid_structure'};
         }

@@ -8,11 +8,12 @@ const router = express.Router();
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { userId, projectId } = res.locals;
+        const { userId, projectId, code } = req.query as {userId: string, projectId: string, code: string};
 
         const data = await StructuresController({
             userId,
-            projectId
+            projectId,
+            code
         });
 
         res.json(data);
@@ -23,7 +24,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { userId, projectId } = res.locals;
+        const { userId, projectId } = req.query as {userId: string, projectId: string};
         let { name, code } = req.body;
 
         const data = await NewStructureController({
@@ -39,10 +40,14 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     }
 });
 
-router.put('/', async (req: Request, res: Response, next: NextFunction) => {
+router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { userId, projectId } = res.locals;
+        const { userId, projectId } = req.query as {userId: string, projectId: string};
         let { id, name, code, bricks } = req.body;
+
+        if (id !== req.params.id) {
+            throw new Error('Structure ID error');
+        }
 
         const data = await EditStructureController({
             userId,
@@ -61,7 +66,7 @@ router.put('/', async (req: Request, res: Response, next: NextFunction) => {
 
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {userId, projectId} = res.locals;
+        const { userId, projectId } = req.query as {userId: string, projectId: string};
         const {id} = req.params;
 
         const data = await StructureController({
