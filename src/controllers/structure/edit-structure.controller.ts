@@ -29,7 +29,7 @@ export default async function UpdateStructure(
             _id: id
         }, {name, code, bricks});
         if (!structure) {
-            return {error: 'invalid_structure'};
+            throw new Error('invalid structure');
         }
 
         const output = {

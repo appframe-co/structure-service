@@ -9,7 +9,13 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
         res.json(data);
     } catch (e) {
-        res.json({error: 'error'});
+        let message = String(e);
+
+        if (e instanceof Error) {
+            message = e.message; 
+        }
+
+        res.json({error: 'server_error', description: message});
     }
 });
 

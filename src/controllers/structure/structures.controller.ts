@@ -14,7 +14,7 @@ export default async function Structures(
 
         const structures = await Structure.find(filter);
         if (!structures) {
-            return {error: 'invalid_structure'};
+            throw new Error('invalid structure');
         }
 
         const output = structures.map((structure: TStructure)  => ({

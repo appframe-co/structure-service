@@ -24,7 +24,7 @@ export default async function CreateStructure({userId, projectId, name, code}: T
             code
         });
         if (!structure) {
-            return {error: 'invalid_structure'};
+            throw new Error('invalid structure');
         }
 
         const output = {

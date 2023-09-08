@@ -8,7 +8,7 @@ export default async function StructureController(
     try {
         const structure = await Structure.findOne({_id: id, userId, projectId});
         if (!structure) {
-            return {error: 'invalid_structure'};
+            throw new Error('invalid structure');
         }
 
         const output = {

@@ -5,7 +5,7 @@ export default async function SchemaBricks(): Promise<TErrorResponse | {schemaBr
     try {
         const schemaBricks = await SchemaBrick.find({});
         if (!schemaBricks) {
-            return {error: 'invalid_schemaBricks'};
+            throw new Error('invalid schema bricks');
         }
 
         const output = schemaBricks.map((schemaBrick: TSchemaBrick)  => ({
