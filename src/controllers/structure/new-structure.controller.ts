@@ -1,7 +1,7 @@
 import Structure from '@/models/structure.model';
 import { TErrorResponse, TStructureInput, TStructure, TBrick } from '@/types/types';
 
-export default async function CreateStructure({userId, projectId, name, code}: TStructureInput): Promise<TErrorResponse | {structure: TStructure}> {
+export default async function CreateStructure({userId, projectId, name, code, bricks}: TStructureInput): Promise<TErrorResponse | {structure: TStructure}> {
     try {
         if (!name || !code) {
             return {error: 'invalid_request'};
@@ -21,7 +21,8 @@ export default async function CreateStructure({userId, projectId, name, code}: T
             userId, 
             projectId, 
             name,
-            code
+            code,
+            bricks
         });
         if (!structure) {
             throw new Error('invalid structure');
@@ -34,7 +35,8 @@ export default async function CreateStructure({userId, projectId, name, code}: T
             bricks: structure.bricks.map((brick: TBrick) => ({
                 type: brick.type,
                 name: brick.name,
-                code: brick.code,
+                key: brick.key,
+                description: brick.description,
                 validation: brick.validation.map(v => ({
                     code: v.code,
                     value: v.value

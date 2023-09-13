@@ -10,7 +10,8 @@ const ValidationSchema: Schema = new Schema({
 
 const BrickSchema: Schema = new Schema({
   name: String,
-  code: String,
+  key: String,
+  description: String,
   type: String,
   validation: [ValidationSchema]
 });

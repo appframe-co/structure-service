@@ -75,6 +75,7 @@ export type TSchemaBrick = {
   name: string;
   code: string;
   icon: string;
+  groupCode: string;
   validation: TValidationSchemaBrick[];
 }
 export type TSchemaBrickOutput = {
@@ -93,6 +94,7 @@ type TValidationBrick = {
 export type TBrick = {
   type: string;
   name: string;
-  code: string;
+  key: string;
+  description: string;
   validation: TValidationBrick[];
 }

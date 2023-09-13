@@ -11,6 +11,7 @@ const SchemaBrickSchema: Schema = new Schema({
   name: String,
   type: String,
   icon: String,
+  groupCode: String,
   validation: [ValidationSchema]
 });
 

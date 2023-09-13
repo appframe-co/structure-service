@@ -31,13 +31,14 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = req.query as {userId: string, projectId: string};
-        let { name, code } = req.body;
+        let { name, code, bricks } = req.body;
 
         const data = await NewStructureController({
             userId,
             projectId,
             name,
-            code
+            code,
+            bricks
         });
 
         res.json(data);

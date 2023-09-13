@@ -14,6 +14,7 @@ export default async function SchemaBricks(): Promise<TErrorResponse | {schemaBr
             name: schemaBrick.name,
             code: schemaBrick.code,
             icon: schemaBrick.icon,
+            groupCode: schemaBrick.groupCode,
             validation: schemaBrick.validation.map(v => ({
                 code: v.code,
                 name: v.name,
