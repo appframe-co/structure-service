@@ -15,10 +15,12 @@ export default async function SchemaBricks(): Promise<TErrorResponse | {schemaBr
             code: schemaBrick.code,
             icon: schemaBrick.icon,
             groupCode: schemaBrick.groupCode,
+            validationDescHtml: schemaBrick.validationDescHtml,
             validation: schemaBrick.validation.map(v => ({
                 code: v.code,
                 name: v.name,
-                value: v.value
+                value: v.value,
+                desc: v.desc
             }))
         }));
 

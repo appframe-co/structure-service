@@ -20,6 +20,7 @@ export type TSchemaBrickModel = {
   name: string;
   code: string;
   icon: string;
+  validationDescHtml: string|null;
   validation: TValidationBrickModel[]
 }
 
@@ -67,6 +68,7 @@ export type TStructureInput = {
 type TValidationSchemaBrick = {
   code: string;
   name: string;
+  desc: string;
   value: any;
 }
 export type TSchemaBrick = {
@@ -76,6 +78,7 @@ export type TSchemaBrick = {
   code: string;
   icon: string;
   groupCode: string;
+  validationDescHtml: string|null,
   validation: TValidationSchemaBrick[];
 }
 export type TSchemaBrickOutput = {
