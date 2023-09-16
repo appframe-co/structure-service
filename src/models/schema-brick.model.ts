@@ -15,7 +15,7 @@ const SchemaBrickSchema: Schema = new Schema({
   groupCode: String,
   list: Boolean,
   validationDescHtml: String,
-  validation: [ValidationSchema]
+  validations: [ValidationSchema]
 });
 
 SchemaBrickSchema.set('toObject', { virtuals: true });

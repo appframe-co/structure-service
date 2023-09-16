@@ -41,7 +41,7 @@ export default async function UpdateStructure(
                 name: brick.name,
                 key: brick.key,
                 description: brick.description,
-                validation: brick.validation.map(v => ({
+                validations: brick.validations.map(v => ({
                     code: v.code,
                     value: v.value
                 })),

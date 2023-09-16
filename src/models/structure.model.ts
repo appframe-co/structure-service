@@ -13,7 +13,7 @@ const BrickSchema: Schema = new Schema({
   key: String,
   description: String,
   type: String,
-  validation: [ValidationSchema]
+  validations: [ValidationSchema]
 });
 
 const StructureSchema: Schema = new Schema({

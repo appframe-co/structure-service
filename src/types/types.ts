@@ -22,13 +22,13 @@ export type TSchemaBrickModel = {
   icon: string;
   list: boolean;
   validationDescHtml: string|null;
-  validation: TValidationBrickModel[]
+  validations: TValidationBrickModel[]
 }
 
 type TBrickModel = {
   name: string;
   code: string;
-  validation: TValidationBrickModel[]
+  validations: TValidationBrickModel[]
 }
 
 export type TStructureModel = {
@@ -81,7 +81,7 @@ export type TSchemaBrick = {
   groupCode: string;
   list: string;
   validationDescHtml: string|null,
-  validation: TValidationSchemaBrick[];
+  validations: TValidationSchemaBrick[];
 }
 export type TSchemaBrickOutput = {
   id: string;
@@ -89,7 +89,7 @@ export type TSchemaBrickOutput = {
   name: string;
   code: string;
   icon: string;
-  validation: TValidationBrick[];
+  validations: TValidationBrick[];
 }
 
 type TValidationBrick = {
@@ -101,5 +101,5 @@ export type TBrick = {
   name: string;
   key: string;
   description: string;
-  validation: TValidationBrick[];
+  validations: TValidationBrick[];
 }
