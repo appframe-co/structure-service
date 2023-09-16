@@ -20,6 +20,7 @@ export type TSchemaBrickModel = {
   name: string;
   code: string;
   icon: string;
+  list: boolean;
   validationDescHtml: string|null;
   validation: TValidationBrickModel[]
 }
@@ -78,6 +79,7 @@ export type TSchemaBrick = {
   code: string;
   icon: string;
   groupCode: string;
+  list: string;
   validationDescHtml: string|null,
   validation: TValidationSchemaBrick[];
 }

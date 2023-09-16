@@ -13,6 +13,7 @@ const SchemaBrickSchema: Schema = new Schema({
   type: String,
   icon: String,
   groupCode: String,
+  list: Boolean,
   validationDescHtml: String,
   validation: [ValidationSchema]
 });
