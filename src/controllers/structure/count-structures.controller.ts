@@ -11,18 +11,18 @@ type TStructuresFilter = {
     code?: string;
 }
 
-export default async function Structures(structureInput: TStructuresInput, parameters: TParameters = {}): Promise<TErrorResponse | {count: number}> {
+export default async function CountStructures(structureInput: TStructuresInput, parameters: TParameters = {}): Promise<TErrorResponse | {count: number}> {
     try {
         const {userId, projectId} = structureInput;
 
         if (!userId || !projectId) {
-            throw new Error('createdBy & projectId query required');
+            throw new Error('userId & projectId query required');
         }
 
         const filter: TStructuresFilter = {userId, projectId};
-        const countStructures: number = await Structure.countDocuments(filter);
+        const count: number = await Structure.countDocuments(filter);
 
-        return {count: countStructures};
+        return {count};
     } catch (error) {
         throw error;
     }
