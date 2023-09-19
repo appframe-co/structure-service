@@ -1,4 +1,5 @@
 import { Application } from "express";
+import { SortOrder } from "mongoose";
 
 export type RoutesInput = {
   app: Application,
@@ -12,7 +13,6 @@ export type TErrorResponse = {
 
 type TValidationBrickModel = {
   code: string;
-  name: string;
   value: any;
 }
 
@@ -26,8 +26,10 @@ export type TSchemaBrickModel = {
 }
 
 type TBrickModel = {
+  type: string;
   name: string;
-  code: string;
+  key: string;
+  description: string;
   validations: TValidationBrickModel[]
 }
 
@@ -103,3 +105,11 @@ export type TBrick = {
   description: string;
   validations: TValidationBrick[];
 }
+
+export type TParameters = {
+  limit?: number;
+  sinceId?: string;
+  code?: string;
+}
+
+export type TSort = {[key: string]: SortOrder};

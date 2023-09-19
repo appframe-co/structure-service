@@ -36,13 +36,17 @@ const StructureSchema: Schema = new Schema({
     default: []
   },
   createdAt: {
-      type: Date,
-      default: new Date
+    type: Date,
+    default: new Date
   },
   updatedAt: {
-      type: Date,
-      default: new Date
-  }
+    type: Date,
+    default: new Date
+  },
+  enabled: {
+    type: Boolean,
+    default: true
+  },
 });
 
 StructureSchema.set('toObject', { virtuals: true });
