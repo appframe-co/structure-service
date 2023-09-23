@@ -11,12 +11,18 @@ type TStructuresFilter = {
     code?: string;
 }
 
-export default async function Structures(structureInput: TStructuresInput, parameters: TParameters = {}): Promise<TErrorResponse | {structures: TStructure[]}> {
+type TOutputStructure = TStructure & {entriesCount: number}
+
+function isErrorEntryCount(data: TErrorResponse|{count:number}): data is TErrorResponse {
+    return !!(data as TErrorResponse).error;
+}
+
+export default async function Structures(structureInput: TStructuresInput, parameters: TParameters = {}): Promise<TErrorResponse | {structures: TOutputStructure[]}> {
     try {
         const {userId, projectId} = structureInput;
 
         if (!userId || !projectId) {
-            throw new Error('createdBy & projectId query required');
+            throw new Error('userId & projectId query required');
         }
 
         const sort: TSort = {};
@@ -38,21 +44,36 @@ export default async function Structures(structureInput: TStructuresInput, param
             throw new Error('invalid structure');
         }
 
-        const output = structures.map(structure => ({
-            id: structure.id,
-            name: structure.name,
-            code: structure.code,
-            bricks: structure.bricks.map(brick => ({
-                type: brick.type,
-                name: brick.name,
-                key: brick.key,
-                description: brick.description,
-                validations: brick.validations.map(v => ({
-                    code: v.code,
-                    value: v.value
+        const output = [];
+        for (const structure of structures) {
+            const resFetchEntryCount = await fetch(`${process.env.URL_ENTRY_SERVICE}/api/entries/count?userId=${userId}&projectId=${projectId}&structureId=${structure.id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const entryCountFetch: {count: number}|TErrorResponse = await resFetchEntryCount.json();
+            if (isErrorEntryCount(entryCountFetch)) {
+                throw new Error('Error entry count');
+            }
+
+            output.push({
+                id: structure.id,
+                name: structure.name,
+                code: structure.code,
+                bricks: structure.bricks.map(brick => ({
+                    type: brick.type,
+                    name: brick.name,
+                    key: brick.key,
+                    description: brick.description,
+                    validations: brick.validations.map(v => ({
+                        code: v.code,
+                        value: v.value
+                    })),
                 })),
-            }))
-        }));
+                entriesCount: entryCountFetch.count
+            });
+        }
 
         return {structures: output};
     } catch (error) {
