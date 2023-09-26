@@ -62,6 +62,7 @@ export default async function Structures(structureInput: TStructuresInput, param
                 name: structure.name,
                 code: structure.code,
                 bricks: structure.bricks.map(brick => ({
+                    id: brick.id,
                     type: brick.type,
                     name: brick.name,
                     key: brick.key,

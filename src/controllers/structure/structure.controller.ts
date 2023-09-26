@@ -16,6 +16,7 @@ export default async function StructureController(
             name: structure.name,
             code: structure.code,
             bricks: structure.bricks.map((brick: TBrick) => ({
+                id: brick.id,
                 type: brick.type,
                 name: brick.name,
                 key: brick.key,

@@ -26,6 +26,7 @@ export type TSchemaBrickModel = {
 }
 
 type TBrickModel = {
+  id: string;
   type: string;
   name: string;
   key: string;
@@ -60,6 +61,7 @@ export type TStructure = {
 export type TStructureInput = {
   userId: string;
   projectId: string;
+  id?: string;
   name: string;
   code: string;
   bricks?: {
@@ -73,6 +75,7 @@ type TValidationSchemaBrick = {
   name: string;
   desc: string;
   value: any;
+  type: string;
 }
 export type TSchemaBrick = {
   id: string;
@@ -99,6 +102,7 @@ type TValidationBrick = {
   value: any;
 }
 export type TBrick = {
+  id: string;
   type: string;
   name: string;
   key: string;

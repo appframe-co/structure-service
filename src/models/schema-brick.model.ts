@@ -5,7 +5,8 @@ const ValidationSchema: Schema = new Schema({
   code: String,
   name: String,
   desc: String,
-  value: Schema.Types.Mixed,
+  type: String,
+  value: Schema.Types.Mixed
 });
 
 const SchemaBrickSchema: Schema = new Schema({

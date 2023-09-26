@@ -21,7 +21,8 @@ export default async function SchemaBricks(): Promise<TErrorResponse | {schemaBr
                 code: v.code,
                 name: v.name,
                 value: v.value,
-                desc: v.desc
+                desc: v.desc,
+                type: v.type
             }))
         }));
 
