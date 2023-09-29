@@ -22,6 +22,7 @@ export default async function StructureController(
                 key: brick.key,
                 description: brick.description,
                 validations: brick.validations.map(v => ({
+                    type: v.type,
                     code: v.code,
                     value: v.value
                 })),

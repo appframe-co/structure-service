@@ -5,7 +5,8 @@ const ObjectId = Schema.ObjectId;
 
 const ValidationSchema: Schema = new Schema({
   code: String,
-  value: Schema.Types.Mixed,
+  type: String,
+  value: Schema.Types.Mixed
 });
 
 const BrickSchema: Schema = new Schema({

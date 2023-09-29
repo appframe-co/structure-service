@@ -2,6 +2,8 @@ import Structure from '@/models/structure.model';
 import { TStructureInput, TStructure, TBrick, TStructureModel } from '@/types/types';
 import { validateArray } from '@/utils/validators/array.validator';
 import { validateBoolean } from '@/utils/validators/boolean.validator';
+import { validateDate } from '@/utils/validators/date.validator';
+import { validateDateTime } from '@/utils/validators/datetime.validator';
 import { validateNumber } from '@/utils/validators/number.validator';
 import { validateString } from '@/utils/validators/string.validator';
 
@@ -59,8 +61,9 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                             {required: true, choices: [[
                                 'single_line_text', 'multi_line_text',
                                 'number_integer', 'number_decimal', 'boolean',
+                                'date_time', 'date',
                                 'file_reference',
-                                'list.single_line_text', 'list.file_reference'
+                                'list.single_line_text', 'list.date_time', 'list.date', 'list.file_reference'
                             ]]}
                         );
                         if (errorsType.length > 0) {
@@ -91,7 +94,7 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                         }
 
                         const validatedValidations = validations.map((v:any, j:number) => {
-                            const {code, value} = v;
+                            const {code, value, type} = v;
 
                             const codes = ['required', 'choices', 'max', 'min', 'regex', 'max_precision'];
     
@@ -99,15 +102,33 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                             if (errorsCode.length > 0) {
                                 errors.push({field: ['bricks', k, 'validations', j, 'code'], message: errorsCode[0]});
                             }
-                            
+
+                            const types = ['checkbox', 'text', 'number', 'date_time', 'date', 'list.text'];
+                            const [errorsType, valueType] = validateString(type, {required: true, choices: [types]});
+                            if (errorsType.length > 0) {
+                                errors.push({field: ['bricks', k, 'validations', j, 'type'], message: errorsType[0]});
+                            }
+
                             const [errorsValue, valueValue] = (function() {
                                 if (valueCode === 'required') {
                                     return validateBoolean(value, {max: 255});
                                 }
                                 if (valueCode === 'min') {
+                                    if (v.type === 'date_time') {
+                                        return validateDateTime(value);
+                                    }
+                                    if (v.type === 'date') {
+                                        return validateDate(value);
+                                    }
                                     return validateNumber(value, {min: [0, "Validations contains an invalid value: 'min' must be positive."]});
                                 }
                                 if (valueCode === 'max') {
+                                    if (v.type === 'date_time') {
+                                        return validateDateTime(value);
+                                    }
+                                    if (v.type === 'date') {
+                                        return validateDate(value);
+                                    }
                                     return validateNumber(value, {min: [0, "Validations contains an invalid value: 'max' must be positive."]});
                                 }
                                 if (valueCode === 'max_precision') {
@@ -145,6 +166,7 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                             }
 
                             return {
+                                type: valueType,
                                 code: valueCode,
                                 value: valueValue,
                             };
@@ -238,6 +260,7 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                             key: brick.key,
                             description: brick.description,
                             validations: brick.validations.map(v => ({
+                                type: v.type,
                                 code: v.code,
                                 value: v.value
                             })),

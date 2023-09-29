@@ -13,6 +13,7 @@ export type TErrorResponse = {
 
 type TValidationBrickModel = {
   code: string;
+  type: string;
   value: any;
 }
 
@@ -98,6 +99,7 @@ export type TSchemaBrickOutput = {
 }
 
 type TValidationBrick = {
+  type: string;
   code: string;
   value: any;
 }
