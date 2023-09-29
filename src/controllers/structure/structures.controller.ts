@@ -38,7 +38,6 @@ export default async function Structures(structureInput: TStructuresInput, param
         }
 
         sort['_id'] = 'asc';
-
         const structures: TStructureModel[] = await Structure.find(filter).limit(limit).sort(sort);
         if (!structures) {
             throw new Error('invalid structure');
