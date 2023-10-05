@@ -71,7 +71,7 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                         const [errorsType, valueType] = validateString(type,
                             {required: true, choices: [[
                                 'single_line_text', 'multi_line_text',
-                                'number_integer', 'number_decimal', 'boolean',
+                                'number_integer', 'number_decimal', 'boolean', 'money',
                                 'date_time', 'date',
                                 'file_reference',
                                 'list.single_line_text', 'list.date_time', 'list.date', 'list.file_reference'
