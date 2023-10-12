@@ -72,6 +72,7 @@ export default async function Structures(structureInput: TStructuresInput, param
                         value: v.value
                     })),
                 })),
+                notifications: structure.notifications,
                 entriesCount: entryCountFetch.count
             });
         }

@@ -264,7 +264,8 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                                 code: v.code,
                                 value: v.value
                             })),
-                        }))
+                        })),
+                        notifications: structure.notifications
                     }
                 }
 

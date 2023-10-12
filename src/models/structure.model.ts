@@ -7,7 +7,7 @@ const ValidationSchema: Schema = new Schema({
   code: String,
   type: String,
   value: Schema.Types.Mixed
-});
+}, { _id : false });
 
 const BrickSchema: Schema = new Schema({
   name: String,
@@ -16,6 +16,15 @@ const BrickSchema: Schema = new Schema({
   type: String,
   validations: [ValidationSchema]
 });
+
+const NotificationSchema: Schema = new Schema({
+  new: {
+    alert: {
+      enabled: Boolean,
+      message: String
+    }
+  }
+}, { _id : false });
 
 const StructureSchema: Schema = new Schema({
   userId: {
@@ -35,6 +44,9 @@ const StructureSchema: Schema = new Schema({
   bricks: {
     type: [BrickSchema],
     default: []
+  },
+  notifications: {
+    type: NotificationSchema
   },
   createdAt: {
     type: Date,

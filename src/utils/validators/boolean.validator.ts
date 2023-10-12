@@ -6,7 +6,7 @@ function setOutputOption(v: any=[], msg:string='') {
     return res;
 }
 
-export function validateBoolean(value:string, options:any={}): [string[], number|null] {
+export function validateBoolean(value:boolean, options:any={}): [string[], number|null] {
     const {defaultValue=false} = options;
     let outputValue: any = value;
     const errors = [];

@@ -42,6 +42,14 @@ export type TStructureModel = {
   code: string;
   name: string;
   bricks: TBrickModel[];
+  notifications: {
+    new: {
+      alert: {
+        enabled: boolean;
+        message: string
+      }
+    }
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,6 +65,14 @@ export type TStructure = {
   name: string;
   code: string;
   bricks: TBrick[];
+  notifications: {
+    new: {
+      alert: {
+        enabled: boolean;
+        message: string
+      }
+    }
+  };
 }
 
 export type TStructureInput = {
@@ -68,7 +84,15 @@ export type TStructureInput = {
   bricks?: {
     type: string;
     name: string;
-  }[]
+  }[];
+  notifications?: {
+    new: {
+      alert: {
+        enabled: boolean;
+        message: string
+      }
+    }
+  };
 }
 
 type TValidationSchemaBrick = {

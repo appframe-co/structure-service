@@ -191,6 +191,28 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                         };
                     });
 
+                    const {notifications} = data;
+                    if (notifications) {
+                        const [errorsNewAlertEnabled, valueNewAlertEnabled] = validateBoolean(notifications.new.alert.enabled || false);
+                        if (errorsNewAlertEnabled.length > 0) {
+                            errors.push({field: ['notifications', 'new', 'alert', 'enabled'], message: errorsNewAlertEnabled[0]}); 
+                        }
+    
+                        const [errorsNewAlertMessage, valueNewAlertMessage] = validateString(notifications.new.alert.message || '');
+                        if (errorsNewAlertMessage.length > 0) {
+                            errors.push({field: ['notifications', 'new', 'alert', 'message'], message: errorsNewAlertMessage[0]});
+                        }
+    
+                        structure['notifications'] = {
+                            new: {
+                                alert: {
+                                    enabled: valueNewAlertEnabled,
+                                    message: valueNewAlertMessage
+                                }
+                            }
+                        };
+                    }
+
                     return structure;
                 }());
 
@@ -214,7 +236,7 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
         const {errors: errorsDB, data: savedData} = await (async (data, payload) => {
             try {
                 const {structureId} = payload;
-    
+
                 const errors: any = [];
                 const output: any = {structureId};
 
@@ -273,7 +295,8 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                                 code: v.code,
                                 value: v.value
                             })),
-                        }))
+                        })),
+                        notifications: structure.notifications,
                     }
                 }
 

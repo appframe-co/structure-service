@@ -1,12 +1,12 @@
 import Structure from '@/models/structure.model'
-import { TErrorResponse, TStructure, TBrick } from '@/types/types'
+import { TErrorResponse, TStructure, TBrick, TStructureModel } from '@/types/types'
 
 export default async function StructureController(
     {userId, projectId, id}: 
     {userId: string, projectId: string, id: string}
     ): Promise<TErrorResponse | {structure: TStructure}> {
     try {
-        const structure = await Structure.findOne({_id: id, userId, projectId});
+        const structure: TStructureModel|null = await Structure.findOne({_id: id, userId, projectId});
         if (!structure) {
             throw new Error('invalid structure');
         }
@@ -26,7 +26,8 @@ export default async function StructureController(
                     code: v.code,
                     value: v.value
                 })),
-            }))
+            })),
+            notifications: structure.notifications
         };
 
         return {structure: output};
