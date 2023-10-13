@@ -65,6 +65,8 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                     if (errorsBricks.length > 0) {
                         errors.push({field: ['bricks'], message: errorsBricks[0]});
                     }
+
+                    const keys = valueBricks.map((v: any) => v.key);
                     structure.bricks = valueBricks.map((v:any, k:number) => {
                         const {type, name, key, description, validations} = v;
 
@@ -97,6 +99,9 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                         });
                         if (errorsKey.length > 0) {
                             errors.push({field: ['bricks', k, 'key'], message: errorsKey[0]}); 
+                        }
+                        if (valueBricks.filter((v:any) => v.key === valueKey).length > 1) {
+                            errors.push({field: ['bricks', k, 'key'], message: 'Value must be unique'});
                         }
 
                         const [errorsDescription, valueDescription] = validateString(description, {max: 100});
