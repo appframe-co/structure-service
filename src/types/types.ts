@@ -101,6 +101,7 @@ type TValidationSchemaBrick = {
   desc: string;
   value: any;
   type: string;
+  presetChoices: {name: string, value: string}[];
 }
 export type TSchemaBrick = {
   id: string;

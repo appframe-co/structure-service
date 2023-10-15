@@ -1,12 +1,18 @@
 import mongoose, { Schema, Document } from "mongoose";
 import {TSchemaBrickModel} from '@/types/types'
 
+const PresetChoiceSchema: Schema = new Schema({
+  name: String,
+  value: String
+}, { _id : false });
+
 const ValidationSchema: Schema = new Schema({
   code: String,
   name: String,
   desc: String,
   type: String,
-  value: Schema.Types.Mixed
+  value: Schema.Types.Mixed,
+  presetChoices: [PresetChoiceSchema]
 });
 
 const SchemaBrickSchema: Schema = new Schema({
