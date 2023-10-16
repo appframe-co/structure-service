@@ -96,8 +96,7 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                         const validatedValidations = validations.map((v:any, j:number) => {
                             const {code, value, type} = v;
 
-                            const codes = ['required', 'choices', 'max', 'min', 'regex', 'max_precision'];
-    
+                            const codes = ['required', 'unique', 'choices', 'max', 'min', 'regex', 'max_precision'];
                             const [errorsCode, valueCode] = validateString(code,{required: true, choices: [codes]});
                             if (errorsCode.length > 0) {
                                 errors.push({field: ['bricks', k, 'validations', j, 'code'], message: errorsCode[0]});
@@ -111,7 +110,10 @@ export default async function CreateStructure(structureInput: TStructureInput): 
 
                             const [errorsValue, valueValue] = (function() {
                                 if (valueCode === 'required') {
-                                    return validateBoolean(value, {max: 255});
+                                    return validateBoolean(value);
+                                }
+                                if (valueCode === 'unique') {
+                                    return validateBoolean(value);
                                 }
                                 if (valueCode === 'min') {
                                     if (v.type === 'date_time') {
