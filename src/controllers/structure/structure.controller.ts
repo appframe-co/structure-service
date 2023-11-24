@@ -27,7 +27,8 @@ export default async function StructureController(
                     value: v.value
                 })),
             })),
-            notifications: structure.notifications
+            notifications: structure.notifications,
+            translations: structure.translations
         };
 
         return {structure: output};

@@ -7,6 +7,8 @@ import { validateDateTime } from '@/utils/validators/datetime.validator';
 import { validateNumber } from '@/utils/validators/number.validator';
 import { validateString } from '@/utils/validators/string.validator';
 
+import { checkUnique } from '@/utils/unique';
+
 function isErrorStructure(data: null|TStructureModel): data is null {
     return (data as null) === null;
 }
@@ -47,6 +49,10 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                     if (errorsCode.length > 0) {
                         errors.push({field: ['code'], message: errorsCode[0]}); 
                     }
+                    const isUniquie: boolean|null = await checkUnique(valueCode, {projectId, key: 'code'});
+                    if (isUniquie === false) {
+                        errors.push({field: ['code'], message: 'Code must be unique'});
+                    }
                     structure.code = valueCode;
 
                     const {bricks} = data;
@@ -63,7 +69,8 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                                 'number_integer', 'number_decimal', 'boolean', 'money',
                                 'date_time', 'date',
                                 'file_reference',
-                                'list.single_line_text', 'list.date_time', 'list.date', 'list.file_reference'
+                                'list.single_line_text', 'list.date_time', 'list.date', 'list.file_reference',
+                                'url_handle'
                             ]]}
                         );
                         if (errorsType.length > 0) {
@@ -96,7 +103,7 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                         const validatedValidations = validations.map((v:any, j:number) => {
                             const {code, value, type} = v;
 
-                            const codes = ['required', 'unique', 'choices', 'max', 'min', 'regex', 'max_precision'];
+                            const codes = ['required', 'unique', 'choices', 'max', 'min', 'regex', 'max_precision', 'brick_reference', 'transliteration'];
                             const [errorsCode, valueCode] = validateString(code,{required: true, choices: [codes]});
                             if (errorsCode.length > 0) {
                                 errors.push({field: ['bricks', k, 'validations', j, 'code'], message: errorsCode[0]});
@@ -150,6 +157,12 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                                             max: [255, "Validations contains an invalid value."]
                                         }]
                                     });
+                                }
+                                if (valueCode === 'brick_reference') {
+                                    return validateString(value);
+                                }
+                                if (valueCode === 'transliteration') {
+                                    return validateBoolean(value);
                                 }
 
                                 return [[], null];
@@ -267,7 +280,8 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                                 value: v.value
                             })),
                         })),
-                        notifications: structure.notifications
+                        notifications: structure.notifications,
+                        translations: structure.translations
                     }
                 }
 

@@ -26,6 +26,13 @@ const NotificationSchema: Schema = new Schema({
   }
 }, { _id : false });
 
+const TranslationSchema: Schema = new Schema({
+  enabled: {
+    type: Boolean,
+    default: true
+  }
+});
+
 const StructureSchema: Schema = new Schema({
   userId: {
     type: ObjectId,
@@ -38,8 +45,7 @@ const StructureSchema: Schema = new Schema({
   name: String,
   code: {
     type: String,
-    require: true,
-    unique: true
+    require: true
   },
   bricks: {
     type: [BrickSchema],
@@ -47,6 +53,9 @@ const StructureSchema: Schema = new Schema({
   },
   notifications: {
     type: NotificationSchema
+  },
+  translations: {
+    type: TranslationSchema
   },
   createdAt: {
     type: Date,
@@ -59,7 +68,7 @@ const StructureSchema: Schema = new Schema({
   enabled: {
     type: Boolean,
     default: true
-  },
+  }
 });
 
 StructureSchema.set('toObject', { virtuals: true });

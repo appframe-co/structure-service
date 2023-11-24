@@ -1,5 +1,6 @@
 import Structure from '@/models/structure.model';
 import { TStructureInput, TStructure, TBrick, TStructureModel } from '@/types/types';
+import { checkUnique } from '@/utils/unique';
 import { validateArray } from '@/utils/validators/array.validator';
 import { validateBoolean } from '@/utils/validators/boolean.validator';
 import { validateDate } from '@/utils/validators/date.validator';
@@ -30,12 +31,14 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
 
         const structureId = structure.id;
 
-        const {errors: errorsForm, data: validatedData} = await (async (data) => {
+        const {errors: errorsForm, data: validatedData} = await (async (data, payload) => {
             try {
                 const errors: any = [];
                 const output: any = {};
 
-                output.structure = await (async function() {
+                const {structureId}: {structureId:string} = payload;
+
+                output.structure = await (async function(structureId) {
                     const structure: any = {};
 
                     const {name} = data;
@@ -58,6 +61,10 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                     if (errorsCode.length > 0) {
                         errors.push({field: ['code'], message: errorsCode[0]}); 
                     }
+                    const isUniquie: boolean|null = await checkUnique(valueCode, {projectId, structureId, key: 'code'});
+                    if (isUniquie === false) {
+                        errors.push({field: ['code'], message: 'Code must be unique'});
+                    }
                     structure.code = valueCode;
 
                     const {bricks} = data;
@@ -66,9 +73,8 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                         errors.push({field: ['bricks'], message: errorsBricks[0]});
                     }
 
-                    const keys = valueBricks.map((v: any) => v.key);
                     structure.bricks = valueBricks.map((v:any, k:number) => {
-                        const {type, name, key, description, validations} = v;
+                        const {id, type, name, key, description, validations} = v;
 
                         const [errorsType, valueType] = validateString(type,
                             {required: true, choices: [[
@@ -76,7 +82,8 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                                 'number_integer', 'number_decimal', 'boolean', 'money',
                                 'date_time', 'date',
                                 'file_reference',
-                                'list.single_line_text', 'list.date_time', 'list.date', 'list.file_reference'
+                                'list.single_line_text', 'list.date_time', 'list.date', 'list.file_reference',
+                                'url_handle'
                             ]]}
                         );
                         if (errorsType.length > 0) {
@@ -112,7 +119,7 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                         const validatedValidations = validations.map((v:any, j:number) => {
                             const {code, value, type} = v;
 
-                            const codes = ['required', 'unique', 'choices', 'max', 'min', 'regex', 'max_precision'];
+                            const codes = ['required', 'unique', 'choices', 'max', 'min', 'regex', 'max_precision', 'brick_reference', 'transliteration'];
                             const [errorsCode, valueCode] = validateString(code, {required: true, choices: [codes]});
                             if (errorsCode.length > 0) {
                                 errors.push({field: ['bricks', k, 'validations', j, 'code'], message: errorsCode[0]});
@@ -167,6 +174,12 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                                         }]
                                     });
                                 }
+                                if (valueCode === 'brick_reference') {
+                                    return validateString(value);
+                                }
+                                if (valueCode === 'transliteration') {
+                                    return validateBoolean(value);
+                                }
 
                                 return [[], null];
                             }());
@@ -191,6 +204,7 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                         });
 
                         return {
+                            id,
                             type: valueType,
                             name: valueName,
                             key: valueKey,
@@ -201,12 +215,12 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
 
                     const {notifications} = data;
                     if (notifications) {
-                        const [errorsNewAlertEnabled, valueNewAlertEnabled] = validateBoolean(notifications.new.alert.enabled || false);
+                        const [errorsNewAlertEnabled, valueNewAlertEnabled] = validateBoolean(notifications.new.alert.enabled);
                         if (errorsNewAlertEnabled.length > 0) {
                             errors.push({field: ['notifications', 'new', 'alert', 'enabled'], message: errorsNewAlertEnabled[0]}); 
                         }
-    
-                        const [errorsNewAlertMessage, valueNewAlertMessage] = validateString(notifications.new.alert.message || '');
+
+                        const [errorsNewAlertMessage, valueNewAlertMessage] = validateString(notifications.new.alert.message, {required: valueNewAlertEnabled});
                         if (errorsNewAlertMessage.length > 0) {
                             errors.push({field: ['notifications', 'new', 'alert', 'message'], message: errorsNewAlertMessage[0]});
                         }
@@ -221,8 +235,20 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                         };
                     }
 
+                    const {translations} = data;
+                    if (translations) {
+                        const [errorsEnabled, valueEnabled] = validateBoolean(translations.enabled);
+                        if (errorsEnabled.length > 0) {
+                            errors.push({field: ['translations', 'enabled'], message: errorsEnabled[0]}); 
+                        }
+    
+                        structure['translations'] = {
+                            enabled: valueEnabled
+                        };
+                    }
+
                     return structure;
-                }());
+                }(structureId));
 
                 return {errors, data: output};
             } catch (e) {
@@ -233,7 +259,7 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
 
                 return {errors: [{message}]};
             }
-        })(structureBody);
+        })(structureBody, {structureId});
         if (Object.keys(errorsForm).length > 0) {
             return {
                 structure: null,
@@ -305,6 +331,7 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                             })),
                         })),
                         notifications: structure.notifications,
+                        translations: structure.translations
                     }
                 }
 

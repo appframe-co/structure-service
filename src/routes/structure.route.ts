@@ -86,7 +86,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId, projectId } = req.query as {userId: string, projectId: string};
-        let { id, name, code, bricks, notifications } = req.body;
+        let { id, name, code, bricks, notifications, translations } = req.body;
 
         if (id !== req.params.id) {
             throw new Error('Structure ID error');
@@ -99,7 +99,8 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
             name,
             code,
             bricks,
-            notifications
+            notifications,
+            translations
         });
 
         res.json(data);

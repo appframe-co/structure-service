@@ -50,6 +50,9 @@ export type TStructureModel = {
       }
     }
   };
+  translations: {
+    enabled: boolean;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -73,6 +76,9 @@ export type TStructure = {
       }
     }
   };
+  translations: {
+    enabled: boolean;
+  };
 }
 
 export type TStructureInput = {
@@ -92,6 +98,9 @@ export type TStructureInput = {
         message: string
       }
     }
+  };
+  translations?: {
+    enabled: boolean;
   };
 }
 
