@@ -14,7 +14,8 @@ const BrickSchema: Schema = new Schema({
   key: String,
   description: String,
   type: String,
-  validations: [ValidationSchema]
+  validations: [ValidationSchema],
+  system: Boolean
 });
 
 const NotificationSchema: Schema = new Schema({
@@ -30,6 +31,17 @@ const TranslationSchema: Schema = new Schema({
   enabled: {
     type: Boolean,
     default: true
+  }
+});
+
+const SectionSchema: Schema = new Schema({
+  enabled: {
+    type: Boolean,
+    default: true
+  },
+  bricks: {
+    type: [BrickSchema],
+    default: []
   }
 });
 
@@ -56,6 +68,9 @@ const StructureSchema: Schema = new Schema({
   },
   translations: {
     type: TranslationSchema
+  },
+  sections: {
+    type: SectionSchema
   },
   createdAt: {
     type: Date,

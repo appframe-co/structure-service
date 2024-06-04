@@ -28,7 +28,8 @@ export default async function StructureController(
                 })),
             })),
             notifications: structure.notifications,
-            translations: structure.translations
+            translations: structure.translations,
+            sections: structure.sections
         };
 
         return {structure: output};

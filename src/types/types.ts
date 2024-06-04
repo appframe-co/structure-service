@@ -32,7 +32,8 @@ type TBrickModel = {
   name: string;
   key: string;
   description: string;
-  validations: TValidationBrickModel[]
+  validations: TValidationBrickModel[];
+  system: boolean;
 }
 
 export type TStructureModel = {
@@ -52,6 +53,10 @@ export type TStructureModel = {
   };
   translations: {
     enabled: boolean;
+  };
+  sections: {
+    enabled: boolean;
+    bricks: TBrickModel[];
   };
   createdAt: Date;
   updatedAt: Date;
@@ -79,6 +84,10 @@ export type TStructure = {
   translations: {
     enabled: boolean;
   };
+  sections: {
+    enabled: boolean;
+    bricks: TBrick[];
+  };
 }
 
 export type TStructureInput = {
@@ -101,6 +110,13 @@ export type TStructureInput = {
   };
   translations?: {
     enabled: boolean;
+  };
+  sections?: {
+    enabled: boolean;
+    bricks: {
+      type: string;
+      name: string;
+    }[];
   };
 }
 

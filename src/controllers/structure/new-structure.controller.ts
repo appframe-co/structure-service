@@ -196,6 +196,176 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                         };
                     });
 
+                    if (data.hasOwnProperty('sections')) {
+                        structure['sections'] = {};
+
+                        const {sections} = data;
+                        if (sections !== undefined && sections !== null) {
+                            const [errorsEnabled, valueEnabled] = validateBoolean(sections.enabled);
+                            if (errorsEnabled.length > 0) {
+                                errors.push({field: ['sections', 'enabled'], message: errorsEnabled[0]}); 
+                            }
+        
+                            structure.sections.enabled = valueEnabled;
+
+                            if (sections.hasOwnProperty('bricks')) {
+                                const {bricks} = sections;
+                                if (bricks !== undefined && bricks !== null) {
+                                    const [errorsBricks, valueBricks] = validateArray(bricks, {required: true, max: 10});
+                                    if (errorsBricks.length > 0) {
+                                        errors.push({field: ['bricks'], message: errorsBricks[0]});
+                                    }
+            
+                                    structure.sections.bricks = valueBricks.map((v:any, k:number) => {
+                                        const {id, type, name, key, description, validations, system} = v;
+                
+                                        const [errorsType, valueType] = validateString(type,
+                                            {required: true, choices: [[
+                                                'single_line_text', 'multi_line_text',
+                                                'number_integer', 'number_decimal', 'boolean', 'money',
+                                                'date_time', 'date',
+                                                'file_reference',
+                                                'list.single_line_text', 'list.date_time', 'list.date', 'list.file_reference',
+                                                'url_handle'
+                                            ]]}
+                                        );
+                                        if (errorsType.length > 0) {
+                                            errors.push({field: ['sections', 'bricks', k, 'type'], message: errorsType[0]});
+                                        }
+                
+                                        const [errorsName, valueName] = validateString(name, {required: true, max: 255});
+                                        if (errorsName.length > 0) {
+                                            errors.push({field: ['sections', 'bricks', k, 'name'], message: errorsName[0]}); 
+                                        }
+                
+                                        const [errorsKey, valueKey] = validateString(key, {
+                                            required: true, 
+                                            min: 3,
+                                            max: 64,
+                                            regex: [
+                                                new RegExp('^[a-z0-9\-_]+$'),
+                                                "Key can’t include spaces or special characters (i.e. $ # !)"
+                                            ]
+                                        });
+                                        if (errorsKey.length > 0) {
+                                            errors.push({field: ['sections', 'bricks', k, 'key'], message: errorsKey[0]}); 
+                                        }
+                                        if (valueBricks.filter((v:any) => v.key === valueKey).length > 1) {
+                                            errors.push({field: ['sections', 'bricks', k, 'key'], message: 'Value must be unique'});
+                                        }
+                
+                                        const [errorsDescription, valueDescription] = validateString(description, {max: 100});
+                                        if (errorsDescription.length > 0) {
+                                            errors.push({field: ['sections', 'bricks', k, 'description'], message: errorsDescription[0]}); 
+                                        }
+                
+                                        const validatedValidations = validations.map((v:any, j:number) => {
+                                            const {code, value, type} = v;
+                
+                                            const codes = ['required', 'unique', 'choices', 'max', 'min', 'regex', 'max_precision', 'brick_reference', 'transliteration'];
+                                            const [errorsCode, valueCode] = validateString(code, {required: true, choices: [codes]});
+                                            if (errorsCode.length > 0) {
+                                                errors.push({field: ['sections', 'bricks', k, 'validations', j, 'code'], message: errorsCode[0]});
+                                            }
+                
+                                            const types = ['checkbox', 'text', 'number', 'date_time', 'date', 'list.text'];
+                                            const [errorsType, valueType] = validateString(type, {required: true, choices: [types]});
+                                            if (errorsType.length > 0) {
+                                                errors.push({field: ['sections', 'bricks', k, 'validations', j, 'type'], message: errorsType[0]});
+                                            }
+                
+                                            const [errorsValue, valueValue] = (function() {
+                                                if (valueCode === 'required') {
+                                                    return validateBoolean(value);
+                                                }
+                                                if (valueCode === 'unique') {
+                                                    return validateBoolean(value);
+                                                }
+                                                if (valueCode === 'min') {
+                                                    if (v.type === 'date_time') {
+                                                        return validateDateTime(value);
+                                                    }
+                                                    if (v.type === 'date') {
+                                                        return validateDate(value);
+                                                    }
+                                                    return validateNumber(value, {min: [0, "Validations contains an invalid value: 'min' must be positive."]});
+                                                }
+                                                if (valueCode === 'max') {
+                                                    if (v.type === 'date_time') {
+                                                        return validateDateTime(value);
+                                                    }
+                                                    if (v.type === 'date') {
+                                                        return validateDate(value);
+                                                    }
+                                                    return validateNumber(value, {min: [0, "Validations contains an invalid value: 'max' must be positive."]});
+                                                }
+                                                if (valueCode === 'max_precision') {
+                                                    return validateNumber(value, {
+                                                        max: [9, "Validations 'max_precision' can't exceed the precision of 9."], 
+                                                        min: [0, "Validations 'max_precision' can't be a negative number."]
+                                                    });
+                                                }
+                                                if (valueCode === 'regex') {
+                                                    return validateString(value, {max: 255});
+                                                }
+                                                if (valueCode === 'choices') {
+                                                    return validateArray(value, {
+                                                        unique: [true, "Validations has duplicate choices."], 
+                                                        max: [5, "Validations contains a lot of choices."],
+                                                        value: ['string', {
+                                                            max: [255, "Validations contains an invalid value."]
+                                                        }]
+                                                    });
+                                                }
+                                                if (valueCode === 'brick_reference') {
+                                                    return validateString(value);
+                                                }
+                                                if (valueCode === 'transliteration') {
+                                                    return validateBoolean(value);
+                                                }
+                
+                                                return [[], null];
+                                            }());
+                                            if (errorsValue.length > 0) {
+                                                if (valueCode === 'choices') {
+                                                    for (let i=0; i < errorsValue.length; i++) {
+                                                        if (!errorsValue[i]) {
+                                                            continue;
+                                                        }
+                                                        errors.push({field: ['sections', 'bricks', k, 'validations', j, 'value', i], message: errorsValue[i]}); 
+                                                    }
+                                                } else {
+                                                    errors.push({field: ['sections', 'bricks', k, 'validations', j, 'value'], message: errorsValue[0]}); 
+                                                }
+                                            }
+                
+                                            return {
+                                                type: valueType,
+                                                code: valueCode,
+                                                value: valueValue,
+                                            };
+                                        });
+
+                                        const [errorsSystem, valueSystem] = validateBoolean(system);
+                                        if (errorsSystem.length > 0) {
+                                            errors.push({field: ['sections', 'bricks', k, 'system'], message: errorsSystem[0]}); 
+                                        }
+
+                                        return {
+                                            id,
+                                            type: valueType,
+                                            name: valueName,
+                                            key: valueKey,
+                                            description: valueDescription,
+                                            validations: validatedValidations,
+                                            system: valueSystem
+                                        };
+                                    });
+                                }
+                            }
+                        }
+                    }
+
                     return structure;
                 }());
 
@@ -281,7 +451,8 @@ export default async function CreateStructure(structureInput: TStructureInput): 
                             })),
                         })),
                         notifications: structure.notifications,
-                        translations: structure.translations
+                        translations: structure.translations,
+                        sections: structure.sections
                     }
                 }
 
