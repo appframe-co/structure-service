@@ -107,8 +107,6 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 
         res.json(data);
     } catch (e) {
-        console.log(e);
-        
         let message = String(e);
 
         if (e instanceof Error) {
