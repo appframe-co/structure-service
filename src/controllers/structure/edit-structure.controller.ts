@@ -259,17 +259,20 @@ export default async function UpdateStructure(structureInput: TStructureInput): 
                         }
                     }
                     if (data.hasOwnProperty('sections')) {
-                        structure['sections'] = {};
-
                         const {sections} = data;
                         if (sections !== undefined && sections !== null) {
-                            const [errorsEnabled, valueEnabled] = validateBoolean(sections.enabled);
-                            if (errorsEnabled.length > 0) {
-                                errors.push({field: ['sections', 'enabled'], message: errorsEnabled[0]}); 
-                            }
-        
-                            structure.sections.enabled = valueEnabled;
+                            structure['sections'] = {};
 
+                            if (sections.hasOwnProperty('enabled')) {
+                                const {enabled} = sections;
+                                if (enabled !== undefined && enabled !== null) {
+                                    const [errorsEnabled, valueEnabled] = validateBoolean(sections.enabled);
+                                    if (errorsEnabled.length > 0) {
+                                        errors.push({field: ['sections', 'enabled'], message: errorsEnabled[0]}); 
+                                    }
+                                    structure.sections.enabled = valueEnabled;
+                                }
+                            }
                             if (sections.hasOwnProperty('bricks')) {
                                 const {bricks} = sections;
                                 if (bricks !== undefined && bricks !== null) {
